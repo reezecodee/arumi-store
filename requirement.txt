@@ -1,6 +1,6 @@
 pandas
 numpy
-networkx
+pickle
 matplotlib
 flask
 mlxtend

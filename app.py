@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import pickle
 
 # Muat aturan asosiasi dari file pickle
-with open('association_rule.pkl', 'rb') as f:
+with open('model.pkl', 'rb') as f:
     rules = pickle.load(f)
 
 app = Flask(__name__)
