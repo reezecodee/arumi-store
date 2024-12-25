@@ -3,35 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rekomendasi Transaksi</title>
+    <title>Association Rule Recommender</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Masukkan Transaksi</h1>
-    <input type="text" id="transaksi" placeholder="Contoh: A,B,C">
-    <button onclick="getRekomendasi()">Cari Rekomendasi</button>
+    <div class="container">
+        <h1>Rekomendasi Produk Berdasarkan Pembelian Anda</h1>
 
-    <div id="result"></div>
-    <script>
-        async function getRekomendasi() {
-            const transaksi = document.getElementById('transaksi').value.split(',');
-            const response = await fetch('http://127.0.0.1:8000/predict', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ transaksi: ['A', 'B'] })
-            });            
+        <!-- Form untuk memasukkan item -->
+        <form id="transaction-form">
+            <label for="items">Masukkan item yang dibeli (pisahkan dengan koma):</label>
+            <input type="text" id="items" name="items" required>
+            <button type="submit">Dapatkan Rekomendasi</button>
+        </form>
 
-            const data = await response.json();
-            const resultDiv = document.getElementById('result');
-            if (data.rekomendasi) {
-                resultDiv.innerHTML = `Rekomendasi: <br>${JSON.stringify(data.rekomendasi)}`;
-            } else if (data.error) {
-                resultDiv.innerHTML = `Error: ${data.error}`;
-            } else {
-                resultDiv.innerHTML = `Message: ${data.message}`;
-            }
-        }
-    </script>
+        <!-- Bagian untuk menampilkan rekomendasi -->
+        <div id="recommendations">
+            <h2>Rekomendasi:</h2>
+            <ul id="recommendation-list"></ul>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

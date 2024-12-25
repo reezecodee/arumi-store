@@ -1,37 +1,40 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS  # Import Flask-CORS
+from flask import Flask, render_template, request, jsonify
 import pickle
 
+# Muat aturan asosiasi dari file pickle
+with open('association_rule.pkl', 'rb') as f:
+    rules = pickle.load(f)
+
 app = Flask(__name__)
-CORS(app)  # Tambahkan ini untuk mengaktifkan CORS
 
-with open('apriori_model.pkl', 'rb') as f:
-    loaded_rules = pickle.load(f)
+@app.route('/')
+def index():
+    return render_template('index.html')  # Menyajikan halaman utama HTML
 
-def cari_rekomendasi(transaksi_baru, rules):
-    rekomendasi = []
-    for index, rule in rules.iterrows():
-        if set(transaksi_baru).issubset(rule['antecedents']):
-            rekomendasi.append(list(rule['consequents']))
-    return rekomendasi
-
-@app.route('/predict', methods=['POST'])
-def predict():
+@app.route('/recommend', methods=['POST'])
+def recommend():
     try:
-        transaksi_baru = request.json.get('transaksi')
+        data = request.get_json()
+        transaction_items = set(data.get('items', []))  # Menggunakan set untuk pencocokan
 
-        if not transaksi_baru:
-            return jsonify({"error": "Transaksi tidak ditemukan dalam permintaan"}), 400
-        
-        rekomendasi = cari_rekomendasi(transaksi_baru, loaded_rules)
+        # Jika tidak ada items yang diberikan
+        if not transaction_items:
+            return jsonify({'error': 'No items provided'}), 400
 
-        if not rekomendasi:
-            return jsonify({"message": "Tidak ada rekomendasi ditemukan untuk transaksi tersebut."}), 200
-        
-        return jsonify({"rekomendasi": rekomendasi}), 200
-    
+        recommendations = []
+
+        # Cari aturan yang sesuai dengan item yang ada dalam transaksi
+        for index, rule in rules.iterrows():
+            antecedents = rule['antecedents']
+            if antecedents.issubset(transaction_items):  # Cek apakah antecedents adalah subset dari transaksi
+                # Konversi frozenset menjadi list
+                recommendations.append(list(rule['consequents']))
+
+        return jsonify({'recommendations': recommendations})
+
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print(f"Error processing recommendation: {e}")
+        return jsonify({'error': 'Internal Server Error'}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=8000)
