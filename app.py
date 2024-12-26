@@ -20,6 +20,12 @@ def recommend():
         if not transaction_items:
             return jsonify({'error': 'No items provided'}), 400
 
+        all_products = set(rules['antecedents'].explode().unique()).union(
+            set(rules['consequents'].explode().unique())
+        )
+        if transaction_items == all_products:
+            return jsonify({'recommendations': []}) 
+
         recommendations = []
 
         # Cari aturan yang sesuai dengan item yang ada dalam transaksi

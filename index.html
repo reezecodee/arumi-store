@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Selamat Datang di Toko Kami</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <style>
@@ -34,8 +34,8 @@
     <section>
         <div class="flex justify-between items-center gap-6 mx-16 mt-5 jakarta-sans">
             <div class="select-none">
-                <h1 class="text-4xl font-extrabold mb-7">Selamat Datang di Groceries Store</h1>
-                <h6 class="text-xl font-semibold mb-5">Menu makanan</h6>
+                <h1 class="text-4xl font-extrabold mb-7">Selamat Datang di Toko Kami</h1>
+                <h6 class="text-xl font-semibold mb-5">Menu makanan & minuman</h6>
                 <div class="flex flex-wrap gap-4 mb-5 flex-product">
                     <div v-for="(product, index) in products" :key="index">
                         <label class="cursor-pointer card-wrapper">
@@ -48,7 +48,7 @@
                                 <div :class="{'bg-[#FAB007]': product.checked, 'bg-white': !product.checked}"
                                     class="relative border-2 hover:bg-[#FAB007] duration-300 border-[#183153] p-5 w-60 rounded-xl product-card">
                                     <div class="flex justify-center">
-                                        <img src="https://www.svgrepo.com/show/530087/burger-1.svg" alt="" width="50">
+                                        <img :src="imagesProducts[index]" alt="" width="50">
                                     </div>
                                     <p class="text-[#183153] font-semibold mt-1 text-center" v-text="product.name">
                                     </p>
@@ -65,22 +65,25 @@
                     </div>
                     <div class="relative bg-[#ffd43b] border-4 border-[#183153] p-6 h-[70%] w-80 rounded-3xl">
                         <h2 class="font-bold text-[#183153] text-xl">Saran pembelian</h2>
-                        <p class="text-sm mt-2 text-[#183153]">Rasa yang lezat, bikin nagih!</p>
+                        <p class="text-sm mt-2 text-[#183153]">Pilih produk kesukaanmu dan kami akan merekomendasikan
+                            tambahannya.</p>
+                        <h2 class="font-semibold mb-1">Hasil rekomendasi:</h2>
+                        <ul>
+                            <li v-for="(product, index) in recommendationList" :key="index"
+                                class="p-2 bg-[#f1f1f1] mb-1 border-2 border-solid border-[#183153] rounded-md transform transition-transform hover:scale-105 hover:bg-[#f0f0f0]">
+                                <p class="text-center font-bold text-[#183153]" v-text="product"></p>
+                            </li>
+                        </ul>
 
-                        <p class="mt-4 text-[#183153] text-md font-medium">Dapatkan burger spesial hanya dengan
-                            harga
-                            terjangkau!</p>
-
-                            <h2>Hasil rekomendasi:</h2>
-                            <ul>
-                                <li v-for="(product, index) in recommendationList" :key="index" v-text="product">
-                                </li>
-                            </ul>
-
-                        <button @click="handleSubmit"
-                            class="bg-black text-yellow-400 font-bold px-4 py-2 mt-4 block border-4 border-[#183153] rounded-md hover:bg-yellow-400 hover:text-black transition">
-                            Cek rekomendasi
-                        </button>
+                        <div class="relative transition-transform duration-300 hover:scale-95">
+                            <div
+                                class="absolute translate-y-1.5 translate-x-1.5 border-2 border-[#183153] rounded-md bg-[#183153] w-[63%] h-full">
+                            </div>
+                            <button @click="handleSubmit"
+                                class="bg-white font-bold relative text-[#183153] px-4 py-2 mt-4 block rounded-md hover:bg-[#FAB007] hover:text-[#183153] transition">
+                                Cek rekomendasi
+                            </button>
+                        </div>
 
                         <div
                             class="absolute top-[-10px] left-[-10px] bg-red-500 text-white text-xs font-bold px-3 py-1 border-4 border-[#183153] rounded-md">
@@ -97,6 +100,18 @@
         createApp({
             setup() {
                 const products = ref([]);
+                const imagesProducts = [
+                    'https://www.svgrepo.com/show/297764/water-bottle-water.svg',
+                    'https://www.svgrepo.com/show/287562/vegetables-salad.svg',
+                    'https://www.svgrepo.com/show/287591/roll-creamy.svg',
+                    'https://www.svgrepo.com/show/404933/carrot.svg',
+                    'https://www.svgrepo.com/show/489892/ham-sausage.svg',
+                    'https://www.svgrepo.com/show/356652/soda-can-apple.svg',
+                    'https://www.svgrepo.com/show/475214/pineapple.svg',
+                    'https://www.svgrepo.com/show/227320/milk.svg',
+                    'https://www.svgrepo.com/show/227321/ice-cream-yogurt.svg'
+
+                ]
 
                 const fetchProduct = () => {
                     fetch('/products')
@@ -123,13 +138,13 @@
                     const selectedProductNames = products.value
                         .filter(product => product.checked)
                         .map(product => product.name);
-                
+
                     fetch('/recommend', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ items: selectedProductNames }), 
+                        body: JSON.stringify({ items: selectedProductNames }),
                     })
                         .then(response => {
                             if (!response.ok) {
@@ -146,9 +161,10 @@
                             console.log('Error:', error);
                         });
                 };
-                
+
                 return {
                     products,
+                    imagesProducts,
                     recommendationList,
                     handleSubmit
                 };
