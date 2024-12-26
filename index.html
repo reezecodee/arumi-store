@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://unpkg.com/neobrutalismcss@latest" />
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Quicksand:wght@300..700&display=swap');
 
@@ -26,7 +26,8 @@
 <div class=""></div>
 
 <body
-    class="absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]">
+    class="absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]"
+    id="app">
     <div
         class="absolute top-0 z-[-2] h-full w-full bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(255,223,77,0.3),rgba(255,255,255,0))]">
     </div>
@@ -36,74 +37,20 @@
                 <h1 class="text-4xl font-extrabold mb-7">Selamat Datang di Groceries Store</h1>
                 <h6 class="text-xl font-semibold mb-5">Menu makanan</h6>
                 <div class="flex flex-wrap gap-4 mb-5 flex-product">
-                    <div>
+                    <div v-for="(product, index) in products" :key="index">
                         <label class="cursor-pointer card-wrapper">
-                            <input type="checkbox" class="peer hidden  product-checkbox" />
+                            <input type="checkbox" class="peer hidden product-checkbox" v-model="product.checked">
                             <div
                                 class="group relative transition-transform duration-300 hover:scale-95 peer-checked:scale-95">
                                 <div
                                     class="absolute translate-y-1 border-4 bg-[#183153] border-[#183153] rounded-xl w-60 h-full">
                                 </div>
-                                <div
-                                    class="relative border-2 bg-white peer-checked:bg-[#FAB007] hover:bg-[#FAB007] duration-300 border-[#183153] p-5 w-60 rounded-xl product-card">
+                                <div :class="{'bg-[#FAB007]': product.checked, 'bg-white': !product.checked}"
+                                    class="relative border-2 hover:bg-[#FAB007] duration-300 border-[#183153] p-5 w-60 rounded-xl product-card">
                                     <div class="flex justify-center">
                                         <img src="https://www.svgrepo.com/show/530087/burger-1.svg" alt="" width="50">
                                     </div>
-                                    <p class="text-[#183153] font-semibold mt-1 text-center">Burger</p>
-                                </div>
-                            </div>
-                        </label>
-                    </div>
-                    <div>
-                        <label class="cursor-pointer card-wrapper">
-                            <input type="checkbox" class="peer hidden  product-checkbox" />
-                            <div
-                                class="group relative transition-transform duration-300 hover:scale-95 peer-checked:scale-95">
-                                <div
-                                    class="absolute translate-y-1 border-4 bg-[#183153] border-[#183153] rounded-xl w-60 h-full">
-                                </div>
-                                <div
-                                    class="relative border-2 bg-white peer-checked:bg-[#FAB007] hover:bg-[#FAB007] duration-300 border-[#183153] p-5 w-60 rounded-xl product-card">
-                                    <div class="flex justify-center">
-                                        <img src="https://www.svgrepo.com/show/530087/burger-1.svg" alt="" width="50">
-                                    </div>
-                                    <p class="text-[#183153] font-semibold mt-1 text-center">Burger</p>
-                                </div>
-                            </div>
-                        </label>
-                    </div>
-                    <div>
-                        <label class="cursor-pointer card-wrapper">
-                            <input type="checkbox" class="peer hidden  product-checkbox" />
-                            <div
-                                class="group relative transition-transform duration-300 hover:scale-95 peer-checked:scale-95">
-                                <div
-                                    class="absolute translate-y-1 border-4 bg-[#183153] border-[#183153] rounded-xl w-60 h-full">
-                                </div>
-                                <div
-                                    class="relative border-2 bg-white peer-checked:bg-[#FAB007] hover:bg-[#FAB007] duration-300 border-[#183153] p-5 w-60 rounded-xl product-card">
-                                    <div class="flex justify-center">
-                                        <img src="https://www.svgrepo.com/show/530087/burger-1.svg" alt="" width="50">
-                                    </div>
-                                    <p class="text-[#183153] font-semibold mt-1 text-center">Burger</p>
-                                </div>
-                            </div>
-                        </label>
-                    </div>
-                    <div>
-                        <label class="cursor-pointer card-wrapper">
-                            <input type="checkbox" class="peer hidden  product-checkbox" />
-                            <div
-                                class="group relative transition-transform duration-300 hover:scale-95 peer-checked:scale-95">
-                                <div
-                                    class="absolute translate-y-1 border-4 bg-[#183153] border-[#183153] rounded-xl w-60 h-full">
-                                </div>
-                                <div
-                                    class="relative border-2 bg-white peer-checked:bg-[#FAB007] hover:bg-[#FAB007] duration-300 border-[#183153] p-5 w-60 rounded-xl product-card">
-                                    <div class="flex justify-center">
-                                        <img src="https://www.svgrepo.com/show/530087/burger-1.svg" alt="" width="50">
-                                    </div>
-                                    <p class="text-[#183153] font-semibold mt-1 text-center">Burger</p>
+                                    <p class="text-[#183153] font-semibold mt-1 text-center" v-text="product.name"></p>
                                 </div>
                             </div>
                         </label>
@@ -116,7 +63,7 @@
                         class="absolute translate-y-2 translate-x-1.5 border-2 border-[#183153] rounded-3xl bg-[#183153] w-80 h-full">
                     </div>
                     <div class="relative bg-[#ffd43b] border-4 border-[#183153] p-6 h-[70%] w-80 rounded-3xl">
-                        <h2 class="font-bold text-[#183153] text-xl">Burger Special</h2>
+                        <h2 class="font-bold text-[#183153] text-xl">Saran pembelian</h2>
                         <p class="text-sm mt-2 text-[#183153]">Rasa yang lezat, bikin nagih!</p>
 
                         <p class="mt-4 text-[#183153] text-md font-medium">Dapatkan burger spesial hanya dengan harga
@@ -129,7 +76,7 @@
 
                         <div
                             class="absolute top-[-10px] left-[-10px] bg-red-500 text-white text-xs font-bold px-3 py-1 border-4 border-[#183153] rounded-md">
-                            Promo!
+                            Rekomendasi
                         </div>
                     </div>
                 </div>
@@ -137,19 +84,36 @@
         </div>
     </section>
     <script>
-        // Delegasi event ke container utama
-        document.querySelector('.flex-product').addEventListener('change', (event) => {
-            if (event.target.classList.contains('product-checkbox')) {
-                const card = event.target.closest('.card-wrapper').querySelector('.product-card');
-                if (event.target.checked) {
-                    // Tambahkan kelas saat checkbox diaktifkan
-                    card.classList.add('bg-[#FAB007]');
-                } else {
-                    // Hapus kelas saat checkbox dinonaktifkan
-                    card.classList.remove('bg-[#FAB007]');
-                }
+        const { createApp, ref, onMounted } = Vue;
+
+        createApp({
+            setup() {
+                const names = ref(['Budi', 'Anton', 'Rusdi']);
+                const products = ref([]);
+
+                const fetchProduct = () => {
+                    fetch('/products')
+                        .then(response => {
+                            return response.json()
+                        })
+                        .then(data => {
+                            products.value = data.map(product => ({
+                                name: product,
+                                checked: false
+                            }));
+                        })
+                        .catch(error => {
+                            console.log('Error mengambil produk: ' + error);
+                        });
+                };
+
+                onMounted(fetchProduct);
+                return {
+                    names,
+                    products
+                };
             }
-        });
+        }).mount('#app');
     </script>
 </body>
 
