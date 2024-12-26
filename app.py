@@ -15,9 +15,8 @@ def index():
 def recommend():
     try:
         data = request.get_json()
-        transaction_items = set(data.get('items', []))  # Menggunakan set untuk pencocokan
+        transaction_items = set(data.get('items', []))  # Set untuk pencocokan
 
-        # Jika tidak ada items yang diberikan
         if not transaction_items:
             return jsonify({'error': 'No items provided'}), 400
 
@@ -26,9 +25,11 @@ def recommend():
         # Cari aturan yang sesuai dengan item yang ada dalam transaksi
         for index, rule in rules.iterrows():
             antecedents = rule['antecedents']
-            if antecedents.issubset(transaction_items):  # Cek apakah antecedents adalah subset dari transaksi
-                # Konversi frozenset menjadi list
-                recommendations.append(list(rule['consequents']))
+            if antecedents.issubset(transaction_items):  # Jika antecedents cocok
+                recommendations.extend(rule['consequents'])  # Tambahkan elemen
+
+        # Buat daftar unik
+        recommendations = sorted(set(recommendations))  # Unik dan urut
 
         return jsonify({'recommendations': recommendations})
 
@@ -38,7 +39,18 @@ def recommend():
 
 @app.route('/products', methods=['GET'])
 def products():
-    return jsonify(['Minuman', 'Burger', 'Sate', 'Bakso'])
+    try:
+        product_set = set()
+        for index, row in rules.iterrows():
+            product_set.update(row['antecedents'])
+            product_set.update(row['consequents'])
+
+        product_list = sorted(product_set)
+
+        return jsonify(product_list)  
+    except Exception as e:
+        print(f"Error processing products: {e}")
+        return jsonify({'error': 'Unable to retrieve products'}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=8000)
