@@ -19,26 +19,32 @@ def recommend():
         if not transaction_items:
             return jsonify({'error': 'No items provided'}), 400
 
+        # Ambil semua produk dari antecedents dan consequents
         all_products = set(rules['antecedents'].explode().unique()).union(
             set(rules['consequents'].explode().unique())
         )
+        
+        # Jika semua produk sudah dipilih, tidak perlu memberikan rekomendasi
         if transaction_items == all_products:
             return jsonify({'recommendations': []}) 
 
         recommendations = []
 
+        # Cari rekomendasi berdasarkan aturan yang relevan
         for index, rule in rules.iterrows():
             antecedents = rule['antecedents']
             if antecedents.issubset(transaction_items):  
                 recommendations.extend(rule['consequents'])  
 
-        recommendations = sorted(set(recommendations)) 
+        # Hapus produk yang sudah dipilih dari rekomendasi
+        recommendations = sorted(set(recommendations) - transaction_items)
 
         return jsonify({'recommendations': recommendations})
 
     except Exception as e:
         print(f"Error processing recommendation: {e}")
         return jsonify({'error': 'Internal Server Error'}), 500
+
 
 @app.route('/products', methods=['GET'])
 def products():
