@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import pickle
 
-# Muat aturan asosiasi dari file pickle
 with open('model.pkl', 'rb') as f:
     rules = pickle.load(f)
 
@@ -15,7 +14,7 @@ def index():
 def recommend():
     try:
         data = request.get_json()
-        transaction_items = set(data.get('items', []))  # Set untuk pencocokan
+        transaction_items = set(data.get('items', [])) 
 
         if not transaction_items:
             return jsonify({'error': 'No items provided'}), 400
@@ -28,14 +27,12 @@ def recommend():
 
         recommendations = []
 
-        # Cari aturan yang sesuai dengan item yang ada dalam transaksi
         for index, rule in rules.iterrows():
             antecedents = rule['antecedents']
-            if antecedents.issubset(transaction_items):  # Jika antecedents cocok
-                recommendations.extend(rule['consequents'])  # Tambahkan elemen
+            if antecedents.issubset(transaction_items):  
+                recommendations.extend(rule['consequents'])  
 
-        # Buat daftar unik
-        recommendations = sorted(set(recommendations))  # Unik dan urut
+        recommendations = sorted(set(recommendations)) 
 
         return jsonify({'recommendations': recommendations})
 
